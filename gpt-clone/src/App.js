@@ -1,10 +1,22 @@
 import {useState, useEffect} from 'react'
 
 const App=()=> {
- const [value, setValue] = useState('')
- const [message, setMessage] = useState('')
+ const [value, setValue] = useState(null)
+ const [message, setMessage] = useState(null)
  const [previousChats, setPreviousChats] = useState([])
  const [currentTitle, setCurrentTitle] = useState(null)
+
+ const createNewChat = () =>{
+  setMessage(null)
+  setValue("")
+  setCurrentTitle(null)
+ }
+
+ const handleClick=(uniqueTitles) => {
+  setCurrentTitle(uniqueTitles)
+  setMessage(null)
+  setValue("")
+ }
 
  const getMessages = async()=>{
  const options = {
@@ -50,12 +62,16 @@ const App=()=> {
 
  console.log(previousChats)
 
+const currentChat =  previousChats.filter(previousChats=> previousChats.title===currentTitle)
+const uniqueTitles = Array.from(new Set(previousChats.map(previousChats=> previousChats.title)))
+console.log(uniqueTitles)
   return (
     <div className="app">
       <section className="side-bar">
-        <button>+ New Chat</button>
+        <button onClick={createNewChat}>+ New Chat</button>
         <ul className="history">
-          <li></li>
+          {uniqueTitles?.map((uniqueTitles,index)=>(<li key={index} onClick={()=>handleClick(uniqueTitles)}>{uniqueTitles}</li>
+          ))}
         </ul>
         <nav>
           <p>Made by Mahim</p>
@@ -64,7 +80,10 @@ const App=()=> {
       <section className="main">
         {!currentTitle && <h1>MahimGPT</h1>}
         <ul className="feed">
-
+          {currentChat.map((chatMessage, index)=> <li key ={index}>
+            <p className='role'>{chatMessage.role}</p>
+            <p>{chatMessage.content}</p>
+          </li>)}
         </ul>
         <div className="bottom-section">
           <div className="input-container">
